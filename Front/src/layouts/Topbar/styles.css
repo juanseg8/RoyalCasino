@@ -1,0 +1,51 @@
+.icon-hover {
+  transition: color 0.3s ease;
+}
+
+.icon-hover:hover {
+  color: #007bff; /* Color azul al pasar el mouse */
+}
+
+.icon-hover:active {
+  color: #0056b3; /* Color azul oscuro al hacer clic */
+}
+
+.navbar {
+  position: relative;
+  z-index: 3; /* Navbar encima del formulario y del fondo */
+  background-color: #333; /* Fondo oscuro para el navbar */
+  color: white;
+  padding: 1rem;
+}
+
+.btn-custom {
+  height: 32px;
+  min-width: 100px; /* Ajusta este valor según sea necesario */
+  text-align: center; /* Asegura que el texto esté centrado */
+}
+
+.moneda {
+  width: auto;
+  height: 22px;
+}
+
+.btn-logout {
+  height: 32px;
+  width: 32px;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.animated-button {
+  animation: blink 2s infinite; /* Aplica la animación 'blink' durante 2 segundos y la repite infinitamente */
+}

@@ -1,0 +1,46 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+footer {
+  margin-top: auto;
+  width: 100%;
+  padding: 1rem 0;
+  position: relative;
+  z-index: 2;
+}
+
+.icon-hover {
+  transition: color 0.3s ease;
+}
+
+.icon-hover:hover {
+  color: #007bff;
+}
+
+.icon-hover:active {
+  color: #0056b3;
+}
+
+.logo-mercado-pago{
+  height: 40x;
+  width: 150px;
+}
+
+.logo-usdt{
+  height: 40x;
+  width: 150px;
+}
+
+.logo-astropay{
+  height: 35x;
+  width: 120px;
+}
