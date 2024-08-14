@@ -4,13 +4,14 @@ const {
   getUserByPhoneNumber,
   getReferralsByUser,
   deleteUserByPhoneNumber,
-  changeBalance,
+  depositBalance,
+  retiroBalance,
   createUserWithReferral,
   getUserByToken,
   transferSaldoReferido,
 } = require("../controllers/user.js");
 const { login, authMiddleware } = require("../middleware/auth.js");
-const User = require("../models/user.js"); // Importa el modelo de usuario
+const User = require("../models/User.js");
 
 // Rutas para usuarios
 userRouter.get("/users", getAllUsers);
@@ -18,7 +19,16 @@ userRouter.get("/users/:phoneNumber", getUserByPhoneNumber);
 userRouter.get("/user", authMiddleware, getUserByToken);
 userRouter.post("/users", createUserWithReferral);
 userRouter.delete("/users/:phoneNumber", deleteUserByPhoneNumber);
-userRouter.post("/users/:phoneNumber/balance", authMiddleware, changeBalance);
+userRouter.post(
+  "/users/:phoneNumber/balance/deposito",
+  authMiddleware,
+  depositBalance
+);
+userRouter.post(
+  "/users/:phoneNumber/balance/retiro",
+  authMiddleware,
+  retiroBalance
+);
 
 // Ruta para obtener todas las personas referidas por un usuario
 userRouter.post("/users/referrals", getReferralsByUser);
@@ -32,7 +42,11 @@ const generateReferralLink = (userName) => {
 };
 
 // Ruta para transferir saldoReferido a saldo
-userRouter.put("/users/:phoneNumber/transferSaldoReferido", authMiddleware, transferSaldoReferido);
+userRouter.put(
+  "/users/:phoneNumber/transferSaldoReferido",
+  authMiddleware,
+  transferSaldoReferido
+);
 
 // Ruta para obtener el enlace de referencia de un usuario
 userRouter.get("/users/:userName/referral-link", async (req, res) => {

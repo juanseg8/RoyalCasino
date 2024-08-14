@@ -45,7 +45,11 @@ function MyNavbar() {
 
   return (
     <>
-      <Navbar bg="dark" data-bs-theme="dark" expand="lg">
+      <Navbar
+        style={{ backgroundColor: "#0B0E23" }}
+        className="navbar-dark"
+        expand="lg"
+      >
         <Container>
           <Navbar.Brand href="#home">
             <img src="./logo.png" alt="logo" className="logo" />
@@ -57,17 +61,25 @@ function MyNavbar() {
                 Minijuegos
               </Link>
               {userData && userData.role === "cajero" && (
-                <Nav.Link href="/cargafichas">Carga de fichas</Nav.Link>
+                <>
+                  <Link to="/cargafichas" className="nav-link">
+                    Depositar saldo
+                  </Link>
+                  <Link to="/retirarsaldo" className="nav-link">
+                    Retirar saldo
+                  </Link>
+                </>
               )}
               {userData && userData.role === "admin" && (
-                <Nav.Link href="/administrador">
+                <Link to="/administrador" className="nav-link">
                   Panel de administración
-                </Nav.Link>
+                </Link>
               )}
             </Nav>
           </Navbar.Collapse>
         </Container>
       </Navbar>
+
       <Outlet />
     </>
   );

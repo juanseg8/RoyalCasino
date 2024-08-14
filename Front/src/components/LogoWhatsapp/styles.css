@@ -1,0 +1,23 @@
+.whatsapp-icon {
+  position: absolute;
+  bottom: 70px; /* Ajusta la distancia desde el borde inferior */
+  right: 4px; /* Ajusta la distancia desde el borde derecho */
+  z-index: 1000; /* Asegúrate de que el ícono esté por encima del contenido */
+}
+
+.whatsapp-icon img {
+  width: 98px; /* Ajusta el tamaño del ícono según sea necesario */
+  height: auto;
+}
+
+@keyframes moveIcon {
+  0% {
+    transform: translateX(0) translateY(0);
+  }
+  50% {
+    transform: translateX(10px) translateY(-10px);
+  }
+  100% {
+    transform: translateX(0) translateY(0);
+  }
+}

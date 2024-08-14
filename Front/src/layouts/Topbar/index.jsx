@@ -9,45 +9,52 @@ import "./styles.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import io from "socket.io-client";
+
+const socket = io("http://localhost:5000");
 
 function TopBar() {
   const location = useLocation();
   const isRegistroPage = location.pathname === "/register";
-
   const navigate = useNavigate();
-
   const [userData, setUserData] = useState(null);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const token = localStorage.getItem("token");
+  const [balance, setBalance] = useState(0);
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        if (!token) {
-          console.error("No se encontró el token en el almacenamiento local");
-          return;
+    if (token) {
+      const fetchUserData = async () => {
+        try {
+          const config = {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          };
+          const response = await axios.get(
+            "http://localhost:5000/api/user",
+            config
+          );
+          setUserData(response.data);
+          setBalance(response.data.saldo); // Set initial balance
+        } catch (error) {
+          console.error("Error al obtener la información del usuario:", error);
         }
+      };
 
-        const config = {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        };
+      fetchUserData();
+    }
 
-        const response = await axios.get(
-          "http://localhost:5000/api/user",
-          config
-        );
-        setUserData(response.data);
-        console.log(response.data);
-      } catch (error) {
-        console.error("Error al obtener la información del usuario:", error);
-      }
+    socket.on("balanceUpdate", (data) => {
+      console.log("Nuevo saldo recibido del socket:", data); // Depura aquí
+      setBalance(data.newBalance);
+    });
+
+    return () => {
+      socket.off("balanceUpdate");
     };
-
-    fetchUserData();
   }, [token]);
 
   const handleLogin = async (e) => {
@@ -55,7 +62,6 @@ function TopBar() {
     setError(null);
 
     try {
-      console.log(phoneNumber, password);
       const response = await axios.post(
         "http://localhost:5000/api/users/login",
         {
@@ -65,11 +71,11 @@ function TopBar() {
       );
       const { token } = response.data;
       localStorage.setItem("token", token);
-      setUserData(
-        await axios.get("http://localhost:5000/api/user", {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-      );
+      const userResponse = await axios.get("http://localhost:5000/api/user", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setUserData(userResponse.data);
+      setBalance(userResponse.data.saldo); // Update balance
       window.location.reload();
     } catch (error) {
       setError("Error al iniciar sesión. Verifica tus credenciales.");
@@ -78,20 +84,23 @@ function TopBar() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token"); // Cambia "token" por el nombre del item que usas
+    localStorage.removeItem("token");
     navigate("/minijuegos");
     window.location.reload();
   };
 
   return (
-    <Navbar bg="dark" data-bs-theme="dark" expand="lg">
-      <a href="" className="ms-3">
+    <Navbar
+      style={{ backgroundColor: "#0B0E23" }}
+      className="navbar-dark"
+      expand="lg"
+    >
+      <Link to="/afiliados" className="ms-3">
         Afiliados
-      </a>
+      </Link>
       <a href="" className="ms-3">
         Contactanos
       </a>
-
       <FontAwesomeIcon icon={faDiscord} size="m" className="icon-hover ms-4" />
       <FontAwesomeIcon icon={faWhatsapp} size="m" className="icon-hover ms-3" />
 
@@ -112,7 +121,7 @@ function TopBar() {
             <div className="d-flex">
               <Button variant="secondary" className="btn-custom mx-1">
                 <div className="d-flex text-white align-items-center h-100">
-                  {userData.saldo} ARS
+                  {balance} ARS
                 </div>
               </Button>
 

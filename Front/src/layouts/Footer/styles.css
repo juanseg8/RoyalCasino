@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   padding: 0;
@@ -16,6 +17,7 @@ footer {
   padding: 1rem 0;
   position: relative;
   z-index: 2;
+  background-color: #0b0e23;
 }
 
 .icon-hover {
@@ -30,17 +32,17 @@ footer {
   color: #0056b3;
 }
 
-.logo-mercado-pago{
+.logo-mercado-pago {
   height: 40x;
   width: 150px;
 }
 
-.logo-usdt{
+.logo-usdt {
   height: 40x;
   width: 150px;
 }
 
-.logo-astropay{
+.logo-astropay {
   height: 35x;
   width: 120px;
 }

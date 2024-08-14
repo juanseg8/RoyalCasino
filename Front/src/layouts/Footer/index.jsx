@@ -12,7 +12,7 @@ import "./styles.css";
 
 function Footer() {
   return (
-    <footer className="bg-dark text-white p-4">
+    <footer className="text-white p-4">
       <Container>
         <Row>
           <Col md="3" className="mb-3">
@@ -92,8 +92,8 @@ function Footer() {
                 </a>
               </li>
               <li>
-                <a href="/privacy" className="text-white">
-                  Política de Privacidad
+                <a href="/privacidaddatospersonales" className="text-white">
+                  Privacidad y gestion de datos personales
                 </a>
               </li>
               <li>

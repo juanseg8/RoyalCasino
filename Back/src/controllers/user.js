@@ -1,6 +1,7 @@
 // Importa el modelo de usuario
-const User = require("../models/user");
+
 const bcrypt = require("bcrypt");
+const User = require("../models/User");
 
 // Traer todos los usuarios
 const getAllUsers = async (req, res) => {
@@ -54,7 +55,7 @@ const deleteUserByPhoneNumber = async (req, res) => {
 };
 
 // Modificar el saldo de un usuario (solo para usuarios cajeros)
-const changeBalance = async (req, res) => {
+const depositBalance = async (req, res) => {
   const cajero = req.user; // Se supone que el middleware de autenticación almacena al usuario actual en req.user
   const jugadorPhoneNumber = req.params.phoneNumber;
   const { newBalance } = req.body;
@@ -67,6 +68,14 @@ const changeBalance = async (req, res) => {
         .json({ message: "No tienes permiso para realizar esta acción" });
     }
 
+    // Convertir newBalance a número y verificar que sea positivo
+    const newBalanceNumber = parseFloat(newBalance);
+    if (isNaN(newBalanceNumber) || newBalanceNumber <= 0) {
+      return res
+        .status(400)
+        .json({ message: "El saldo debe ser un número positivo" });
+    }
+
     // Buscar al usuario jugador por su número de teléfono
     const user = await User.findOne({ phoneNumber: jugadorPhoneNumber });
 
@@ -75,7 +84,7 @@ const changeBalance = async (req, res) => {
     }
 
     // Modificar el saldo del usuario jugador
-    user.saldo = newBalance;
+    user.saldo = user.saldo + newBalanceNumber;
     await user.save();
 
     // Verificar si el usuario fue referido por alguien
@@ -85,7 +94,59 @@ const changeBalance = async (req, res) => {
 
       if (referrer) {
         // Actualizar el saldo referido del referidor con el 10% del nuevo saldo depositado
-        referrer.saldoReferido = (referrer.saldoReferido || 0) + (newBalance * 0.10);
+        referrer.saldoReferido =
+          (referrer.saldoReferido || 0) + newBalanceNumber * 0.1;
+        await referrer.save();
+      }
+    }
+
+    res.json({ message: "Saldo del usuario modificado exitosamente", user });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const retiroBalance = async (req, res) => {
+  const cajero = req.user; // Se supone que el middleware de autenticación almacena al usuario actual en req.user
+  const jugadorPhoneNumber = req.params.phoneNumber;
+  const { newBalance } = req.body;
+
+  try {
+    // Verificar si el usuario que realiza la solicitud es un cajero
+    if (cajero.role !== "cajero") {
+      return res
+        .status(403)
+        .json({ message: "No tienes permiso para realizar esta acción" });
+    }
+
+    // Convertir newBalance a número y verificar que sea positivo
+    const newBalanceNumber = parseFloat(newBalance);
+    if (isNaN(newBalanceNumber) || newBalanceNumber <= 0) {
+      return res
+        .status(400)
+        .json({ message: "El saldo debe ser un número positivo" });
+    }
+
+    // Buscar al usuario jugador por su número de teléfono
+    const user = await User.findOne({ phoneNumber: jugadorPhoneNumber });
+
+    if (!user) {
+      return res.status(404).json({ message: "Usuario jugador no encontrado" });
+    }
+
+    // Modificar el saldo del usuario jugador
+    user.saldo = user.saldo - newBalanceNumber;
+    await user.save();
+
+    // Verificar si el usuario fue referido por alguien
+    if (user.referredBy) {
+      // Buscar al usuario referidor por su nombre de usuario
+      const referrer = await User.findOne({ userName: user.referredBy });
+
+      if (referrer) {
+        // Actualizar el saldo referido del referidor con el 10% del nuevo saldo depositado
+        referrer.saldoReferido =
+          (referrer.saldoReferido || 0) + newBalanceNumber * 0.1;
         await referrer.save();
       }
     }
@@ -99,7 +160,7 @@ const changeBalance = async (req, res) => {
 const getReferralsByUser = async (req, res) => {
   // Asegúrate de extraer el nombre de usuario del objeto recibido en el cuerpo de la solicitud
   const { referrerUserName } = req.body;
-  
+
   try {
     // Buscar todos los usuarios cuyo campo 'referredBy' coincida con el nombre de usuario del referente
     const referrals = await User.find({ referredBy: referrerUserName });
@@ -170,8 +231,8 @@ const transferSaldoReferido = async (req, res) => {
     await user.save();
 
     res.json({
-      message: 'Saldo transferido exitosamente',
-      user
+      message: "Saldo transferido exitosamente",
+      user,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -182,10 +243,10 @@ module.exports = {
   getAllUsers,
   getUserByPhoneNumber,
   deleteUserByPhoneNumber,
-  changeBalance,
+  depositBalance,
+  retiroBalance,
   getReferralsByUser,
   createUserWithReferral,
   getUserByToken,
-  transferSaldoReferido
+  transferSaldoReferido,
 };
-

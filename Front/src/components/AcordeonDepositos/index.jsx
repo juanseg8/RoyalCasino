@@ -45,7 +45,7 @@ function AcordeonDepositos() {
           </div>
           <div className="flex-fill p-2 w-25">
             <p className="text-muted">Límite</p>
-            <p>Mini: xxx ARS Max: xxx ARS</p>
+            <p>Min : 2.200 ARS Max : 1.000.000 ARS</p>
           </div>
         </Accordion.Header>
         <Accordion.Body>
@@ -103,7 +103,7 @@ function AcordeonDepositos() {
           </div>
           <div className="flex-fill p-2 w-25">
             <p className="text-muted">Límite</p>
-            <p>Mini: xxx ARS Max: xxx ARS</p>
+            <p>Min : 5 USDT Max : 1500 USDT</p>
           </div>
         </Accordion.Header>
         <Accordion.Body className="d-flex">

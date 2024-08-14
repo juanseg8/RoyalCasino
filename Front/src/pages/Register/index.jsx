@@ -3,41 +3,34 @@ import { Form, Button } from "react-bootstrap";
 import AnimatedBackground from "../../components/FondoAnimado";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
 import "./styles.css";
-
-// Estilos para el contenedor del acordeón
-const RegisterContainer = styled.div`
-  position: relative; /* Asegura que el acordeón esté posicionado relativo a este contenedor */
-  z-index: 1; /* Asegura que el acordeón esté por encima del fondo animado */
-`;
 
 function RegisterPage() {
   const [userName, setUserName] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [referralUserName, setReferralUserName] = useState("");
+  const [isAdult, setIsAdult] = useState(false);
+  const [acceptTerms, setAcceptTerms] = useState(false);
 
   const navigate = useNavigate();
 
-  const handleUserName = (event) => {
-    setUserName(event.target.value);
-  };
-
-  const handlePhoneChange = (event) => {
-    setPhone(event.target.value);
-  };
-
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
-  };
-
-  const handleReferralUserName = (event) => {
+  const handleUserName = (event) => setUserName(event.target.value);
+  const handlePhoneChange = (event) => setPhone(event.target.value);
+  const handlePasswordChange = (event) => setPassword(event.target.value);
+  const handleReferralUserName = (event) =>
     setReferralUserName(event.target.value);
-  };
+  const handleIsAdultChange = (event) => setIsAdult(event.target.checked);
+  const handleAcceptTermsChange = (event) =>
+    setAcceptTerms(event.target.checked);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    if (!isAdult || !acceptTerms) {
+      alert("Debes aceptar los términos y confirmar que eres mayor de edad.");
+      return;
+    }
 
     try {
       const response = await axios.post("http://localhost:5000/api/users", {
@@ -70,16 +63,13 @@ function RegisterPage() {
       // Manejar el error según sea necesario
     }
 
-    // Aquí puedes enviar los datos a tu backend para el registro
-    console.log("Nombre de usuario:", userName);
-    console.log("Teléfono:", phone);
-    console.log("Contraseña:", password);
-    console.log("Codigo referido:", referralUserName);
     // Restablece los campos después del envío del formulario
     setUserName("");
     setPhone("");
     setPassword("");
     setReferralUserName("");
+    setIsAdult(false);
+    setAcceptTerms(false);
   };
 
   useEffect(() => {
@@ -93,9 +83,8 @@ function RegisterPage() {
   return (
     <>
       <AnimatedBackground />
-
       <div className="register-page m-5">
-        <div className="">
+        <div>
           <h2 className="text-center">Registro</h2>
           <Form onSubmit={handleSubmit}>
             <Form.Group controlId="formUserName" className="mt-4">
@@ -139,6 +128,26 @@ function RegisterPage() {
                 value={referralUserName}
                 onChange={handleReferralUserName}
                 readOnly={!!referralUserName}
+              />
+            </Form.Group>
+
+            <Form.Group controlId="formIsAdult" className="mt-4">
+              <Form.Check
+                type="checkbox"
+                label="Confirmo que soy mayor de edad"
+                checked={isAdult}
+                onChange={handleIsAdultChange}
+                required
+              />
+            </Form.Group>
+
+            <Form.Group controlId="formAcceptTerms" className="mt-4">
+              <Form.Check
+                type="checkbox"
+                label="Acepto los términos y condiciones"
+                checked={acceptTerms}
+                onChange={handleAcceptTermsChange}
+                required
               />
             </Form.Group>
 

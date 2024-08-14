@@ -26,7 +26,7 @@ function CargaFichas() {
 
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/users/${phoneNumber}/balance`,
+        `http://localhost:5000/api/users/${phoneNumber}/balance/deposito`,
         {
           newBalance: newBalance,
         },
@@ -39,13 +39,13 @@ function CargaFichas() {
 
       const userResponse = await axios.get(
         `http://localhost:5000/api/users/${phoneNumber}`
-      )
+      );
 
-      const user= userResponse.data
+      const user = userResponse.data;
 
       MySwal.fire({
-        icon: 'success',
-        title: 'Éxito',
+        icon: "success",
+        title: "Éxito",
         html: `
         <p>Nombre de usuario: ${user.userName}</p>
         <p>Número de teléfono: ${user.phoneNumber}</p>
@@ -54,8 +54,8 @@ function CargaFichas() {
       });
     } catch (error) {
       MySwal.fire({
-        icon: 'error',
-        title: 'Error',
+        icon: "error",
+        title: "Error",
         text: error.response.data.message,
       });
     }
@@ -66,10 +66,12 @@ function CargaFichas() {
       <AnimatedBackground />
       <AcordeonContainer className="m-5">
         <div className="container form-carga">
-          <h2 className="text-center text-white">Carga de Fichas</h2>
+          <h2 className="text-center text-white">Depositar saldo</h2>
           <Form onSubmit={handleSubmit} className="w-25">
             <Form.Group controlId="phoneNumber" className="mt-4">
-              <Form.Label className="text-white">Número de teléfono:</Form.Label>
+              <Form.Label className="text-white">
+                Número de teléfono:
+              </Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Ingrese el número de teléfono"
@@ -78,17 +80,22 @@ function CargaFichas() {
               />
             </Form.Group>
             <Form.Group controlId="newBalance" className="mt-4">
-              <Form.Label className="text-white">Nuevo saldo:</Form.Label>
+              <Form.Label className="text-white">Saldo a depositar:</Form.Label>
               <Form.Control
                 type="number"
-                placeholder="Ingrese el nuevo saldo"
+                placeholder="Ingrese el saldo a depositar"
                 value={newBalance}
-                onChange={(e) => setNewBalance(e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value >= 0) {
+                    setNewBalance(value);
+                  }
+                }}
               />
             </Form.Group>
             <div className="container d-flex justify-content-center mt-4">
               <Button variant="primary" type="submit" className="mt-4">
-                Cargar Fichas
+                Depositar saldo
               </Button>
             </div>
           </Form>

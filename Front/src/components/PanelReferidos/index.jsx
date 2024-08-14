@@ -1,5 +1,6 @@
 import { React, useState, useEffect } from "react";
 import axios from "axios";
+import PanelAdmin from "../PanelAdmin";
 
 function PanelReferidos() {
   const [copied, setCopied] = useState(false);
@@ -70,51 +71,53 @@ function PanelReferidos() {
   }, [userData]);
 
   return (
-    <div data-bs-theme="dark" className="container">
-      <div className="row">
-        <div className="col-md-6 mb-4">
-          <div className="card text-center">
-            <div className="card-body">
-              <h2 className="card-title">Referidos</h2>
-              <p className="card-text">
-                {usersReferral ? usersReferral.length : "cargando referidos"}
-              </p>
+    <>
+      <div data-bs-theme="dark" className="container">
+        <div className="row">
+          <div className="col-md-6 mb-4">
+            <div className="card text-center">
+              <div className="card-body">
+                <h2 className="card-title">Referidos</h2>
+                <p className="card-text">
+                  {usersReferral ? usersReferral.length : "cargando referidos"}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="col-md-6 mb-4">
+            <div className="card text-center">
+              <div className="card-body">
+                <h2 className="card-title">Saldo de Referidos</h2>
+                <p className="card-text">
+                  $ {userData ? userData.saldoReferido : "cargando saldo"}{" "}
+                </p>
+              </div>
             </div>
           </div>
         </div>
-        <div className="col-md-6 mb-4">
-          <div className="card text-center">
-            <div className="card-body">
-              <h2 className="card-title">Saldo de Referidos</h2>
-              <p className="card-text">
-                $ {userData ? userData.saldoReferido : "cargando saldo"}{" "}
-              </p>
+        <div className="row">
+          <div className="col-md-12">
+            <div className="card text-center">
+              <div className="card-body">
+                <h2 className="card-title">Tu link para referir</h2>
+                <p
+                  className="card-text"
+                  style={{ cursor: "pointer" }}
+                  onClick={copyToClipboard}
+                >
+                  {copied ? "¡Copiado!" : "Haz clic para copiar"}
+                </p>
+                <p className="card-text">
+                  {referralLinkUser
+                    ? referralLinkUser
+                    : "cargando link de referidos"}
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <div className="row">
-        <div className="col-md-12">
-          <div className="card text-center">
-            <div className="card-body">
-              <h2 className="card-title">Tu link para referir</h2>
-              <p
-                className="card-text"
-                style={{ cursor: "pointer" }}
-                onClick={copyToClipboard}
-              >
-                {copied ? "¡Copiado!" : "Haz clic para copiar"}
-              </p>
-              <p className="card-text">
-                {referralLinkUser
-                  ? referralLinkUser
-                  : "cargando link de referidos"}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    </>
   );
 }
 

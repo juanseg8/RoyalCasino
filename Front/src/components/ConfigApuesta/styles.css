@@ -1,0 +1,11 @@
+.bet-settings {
+  padding: 20px;
+}
+.bet-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+.bet-button,
+.cashout-button {
+  margin-top: 10px;
+}
